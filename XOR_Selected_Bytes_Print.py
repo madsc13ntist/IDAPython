@@ -21,38 +21,38 @@ import os
 from time import strftime
 
 def printByte(byte):
-	return str(hex(byte).lstrip("0x")).zfill(2)
+    return str(hex(byte).lstrip("0x")).zfill(2)
 
 ########################### MAIN ###########################
 if __name__ == '__main__':
-	xor_key = AskLong(0xf3, "Please enter a number to XOR with. (prefix hex with '0x')")
-	if 0 < xor_key <= 255:
-		print("\n-------------------- %s ------------------------------" % (os.path.basename(__file__)))
-		print("[%s]" % (strftime("%Y-%m-%d %H:%M:%S")))
-		print("Desc: XOR each byte by %d (0x%x)" % (xor_key, xor_key))
-		print("Offsets: 0x%x-0x%x  (%d bytes)" % (SelStart(), SelEnd(), SelEnd() - SelStart()))
-		orig_bytes    = []
-		decoded_bytes = []
-		ascii_bytes   = []
-		for b in range(SelStart(), SelEnd()+1):
-			orig_byte = GetOriginalByte(b)
-			decoded_byte = orig_byte ^ xor_key
-			orig_bytes.append(printByte(orig_byte))
-			decoded_bytes.append(printByte(decoded_byte))
-			try:
-				if chr(decoded_byte) == '\n':
-					ascii_bytes.append('\\n')
-				elif chr(decoded_byte) == '\r':
-					ascii_bytes.append('\\r')
-				elif chr(decoded_byte) == '\t':
-					ascii_bytes.append('\\t')
-				else:
-					ascii_bytes.append(chr(decoded_byte))
-			except:
-				ascii_bytes.append("%s" % (printByte(decoded_byte)))
-		
-		print("\norig:\t%s"   % (" ".join(orig_bytes)))
-		print("decode:\t%s"   % (" ".join(decoded_bytes)))
-		print("ASCII:\t%s"    % (''.join(ascii_bytes)))
-	else:
-		Warning("%d is greater than 255." % (xor_key))
+    xor_key = AskLong(0xf3, "Please enter a number to XOR with. (prefix hex with '0x')")
+    if 0 < xor_key <= 255:
+        print("\n-------------------- %s ------------------------------" % (os.path.basename(__file__)))
+        print("[%s]" % (strftime("%Y-%m-%d %H:%M:%S")))
+        print("Desc: XOR each byte by %d (0x%x)" % (xor_key, xor_key))
+        print("Offsets: 0x%x-0x%x  (%d bytes)" % (SelStart(), SelEnd(), SelEnd() - SelStart()))
+        orig_bytes    = []
+        decoded_bytes = []
+        ascii_bytes   = []
+        for b in range(SelStart(), SelEnd()+1):
+            orig_byte = GetOriginalByte(b)
+            decoded_byte = orig_byte ^ xor_key
+            orig_bytes.append(printByte(orig_byte))
+            decoded_bytes.append(printByte(decoded_byte))
+            try:
+                if chr(decoded_byte) == '\n':
+                    ascii_bytes.append('\\n')
+                elif chr(decoded_byte) == '\r':
+                    ascii_bytes.append('\\r')
+                elif chr(decoded_byte) == '\t':
+                    ascii_bytes.append('\\t')
+                else:
+                    ascii_bytes.append(chr(decoded_byte))
+            except:
+                ascii_bytes.append("%s" % (printByte(decoded_byte)))
+
+        print("\norig:\t%s"   % (" ".join(orig_bytes)))
+        print("decode:\t%s"   % (" ".join(decoded_bytes)))
+        print("ASCII:\t%s"    % (''.join(ascii_bytes)))
+    else:
+        Warning("%d is greater than 255." % (xor_key))

@@ -22,18 +22,18 @@ from time import strftime
 
 ########################### MAIN ###########################
 if __name__ == '__main__':
-	xor_key = AskLong(0xf3, "Please enter a number to XOR with. \n(prefix hex with '0x')")
-	if 0 < xor_key <= 255:
-		outfile = AskFile(1, GetInputFileMD5().lower() + "_" + hex(SelStart())+".bin", "Save As")
-		if outfile != None:
-			with open(outfile, 'wb') as dump:
-				print("\n[%s]" % (strftime("%Y-%m-%d %H:%M:%S")))
-				print("Decoder:  %s" % (os.path.basename(__file__)))
-				print("XOR key: 0x%x (%d)" % (xor_key, xor_key))
-				print("Offsets:  0x%x-0x%x  (%d bytes)" % (SelStart(), SelEnd(), SelEnd() - SelStart()))
-				print("Saved As: %s " % (outfile))
-				
-				for b in range(SelStart(), SelEnd()+1):
-					dump.write(chr(GetOriginalByte(b) ^ xor_key))
-	else:
-		Warning("%d is greater than 255." % (xor_key))
+    xor_key = AskLong(0xf3, "Please enter a number to XOR with. \n(prefix hex with '0x')")
+    if 0 < xor_key <= 255:
+        outfile = AskFile(1, GetInputFileMD5().lower() + "_" + hex(SelStart())+".bin", "Save As")
+        if outfile != None:
+            with open(outfile, 'wb') as dump:
+                print("\n[%s]" % (strftime("%Y-%m-%d %H:%M:%S")))
+                print("Decoder:  %s" % (os.path.basename(__file__)))
+                print("XOR key: 0x%x (%d)" % (xor_key, xor_key))
+                print("Offsets:  0x%x-0x%x  (%d bytes)" % (SelStart(), SelEnd(), SelEnd() - SelStart()))
+                print("Saved As: %s " % (outfile))
+
+                for b in range(SelStart(), SelEnd()+1):
+                    dump.write(chr(GetOriginalByte(b) ^ xor_key))
+    else:
+        Warning("%d is greater than 255." % (xor_key))

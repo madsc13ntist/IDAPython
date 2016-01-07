@@ -21,40 +21,40 @@ import os
 from time import strftime
 
 def decoder(byte):
-	"""XOR each byte by 0xf3 (243)"""
-	return byte ^ 0xf3
+    """XOR each byte by 0xf3 (243)"""
+    return byte ^ 0xf3
 
 def printByte(byte):
-	return str(hex(byte).lstrip("0x")).zfill(2)
+    return str(hex(byte).lstrip("0x")).zfill(2)
 
 ########################### MAIN ###########################
 if __name__ == '__main__':
-	print("\n-------------------- %s ------------------------------" % (os.path.basename(__file__)))
-	print("[%s]" % (strftime("%Y-%m-%d %H:%M:%S")))
-	print("Desc: %s" % (decoder.__doc__))
-	print("Offsets: 0x%x-0x%x  (%d bytes)" % (SelStart(), SelEnd(), SelEnd() - SelStart()))
-	orig_bytes    = []
-	decoded_bytes = []
-	ascii_bytes   = []
-	for b in range(SelStart(), SelEnd()+1):
-		orig_byte = GetOriginalByte(b)
-		decoded_byte = decoder(orig_byte)
-		orig_bytes.append(printByte(orig_byte))
-		decoded_bytes.append(printByte(decoded_byte))
-		try:
-			if chr(decoded_byte) == '\n':
-				ascii_bytes.append('\\n')
-			elif chr(decoded_byte) == '\r':
-				ascii_bytes.append('\\r')
-			elif chr(decoded_byte) == '\t':
-				ascii_bytes.append('\\t')
-			else:
-				ascii_bytes.append(chr(decoded_byte))
-		except:
-			ascii_bytes.append("%s" % (printByte(decoded_byte)))
-	
-	print("\norig:\t%s"   % (" ".join(orig_bytes)))
-	print("decode:\t%s"   % (" ".join(decoded_bytes)))
-	print("ASCII:\t%s"    % ("".join(ascii_bytes)))
-	
-		
+    print("\n-------------------- %s ------------------------------" % (os.path.basename(__file__)))
+    print("[%s]" % (strftime("%Y-%m-%d %H:%M:%S")))
+    print("Desc: %s" % (decoder.__doc__))
+    print("Offsets: 0x%x-0x%x  (%d bytes)" % (SelStart(), SelEnd(), SelEnd() - SelStart()))
+    orig_bytes    = []
+    decoded_bytes = []
+    ascii_bytes   = []
+    for b in range(SelStart(), SelEnd()+1):
+        orig_byte = GetOriginalByte(b)
+        decoded_byte = decoder(orig_byte)
+        orig_bytes.append(printByte(orig_byte))
+        decoded_bytes.append(printByte(decoded_byte))
+        try:
+            if chr(decoded_byte) == '\n':
+                ascii_bytes.append('\\n')
+            elif chr(decoded_byte) == '\r':
+                ascii_bytes.append('\\r')
+            elif chr(decoded_byte) == '\t':
+                ascii_bytes.append('\\t')
+            else:
+                ascii_bytes.append(chr(decoded_byte))
+        except:
+            ascii_bytes.append("%s" % (printByte(decoded_byte)))
+
+    print("\norig:\t%s"   % (" ".join(orig_bytes)))
+    print("decode:\t%s"   % (" ".join(decoded_bytes)))
+    print("ASCII:\t%s"    % ("".join(ascii_bytes)))
+
+

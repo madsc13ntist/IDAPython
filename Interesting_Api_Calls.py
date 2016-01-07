@@ -22,51 +22,51 @@ from time import strftime
 
 ### these are matched as substrings that will be matched as *PART* of an Api name.  Some are intentionally more complete to reduce noise.
 INTERESTING_SUBSTRINGS = [\
-							### Filesystem Manipulation
-							("CreateFile",    "File Creation/Drop"),\
-							("CopyFile",      "Filesystem Manipulation"),\
-							("DeleteFile",    "Filesystem Manipulation"),\
-							("CFile::Write",  "File Creation/Drop"),\
-							("CFile::Open",   "File Creation/Drop"),\
-							### Filesystem Recognaisance
+                            ### Filesystem Manipulation
+                            ("CreateFile",    "File Creation/Drop"),\
+                            ("CopyFile",      "Filesystem Manipulation"),\
+                            ("DeleteFile",    "Filesystem Manipulation"),\
+                            ("CFile::Write",  "File Creation/Drop"),\
+                            ("CFile::Open",   "File Creation/Drop"),\
+                            ### Filesystem Recognaisance
 #							("CFile::Open",   "File Creation/Drop"),\
-							("CFileFind::",   "Filesystem Crawling"),\
-							("CFile::Read",   "File Access"),\
-							###### Network Activity ######
-							("Http",          "Potential Network Activity"),\
-							("Socket",        "Potential Network Activity"),\
-							("Internet",      "Potential Network Activity"),\
-							("Inet",          "Potential Network Activity"),\
-							###### Process Creation ######
-							("CreateProcess", "Spawns a new process"),\
-							("Mutex",         "Mutex Creation/Manipulation"),\
-							###### Process Injection ######
-							("ProcessMemory", "Potential Process injection"),\
-							###### Service Manipulation ######
-							("Service",       "Potential Service Manipulation"),\
-							###### String manipulation / C2 Creation ######
+                            ("CFileFind::",   "Filesystem Crawling"),\
+                            ("CFile::Read",   "File Access"),\
+                            ###### Network Activity ######
+                            ("Http",          "Potential Network Activity"),\
+                            ("Socket",        "Potential Network Activity"),\
+                            ("Internet",      "Potential Network Activity"),\
+                            ("Inet",          "Potential Network Activity"),\
+                            ###### Process Creation ######
+                            ("CreateProcess", "Spawns a new process"),\
+                            ("Mutex",         "Mutex Creation/Manipulation"),\
+                            ###### Process Injection ######
+                            ("ProcessMemory", "Potential Process injection"),\
+                            ###### Service Manipulation ######
+                            ("Service",       "Potential Service Manipulation"),\
+                            ###### String manipulation / C2 Creation ######
 #							("CString::",      "String Manipulation. Common in C2 creation"),\
-							###### Anti-Analytics ######
-							("Debugger",       "Anti-Analytics"),\
-						]
+                            ###### Anti-Analytics ######
+                            ("Debugger",       "Anti-Analytics"),\
+                        ]
 
 
 ########################### MAIN ###########################
 if __name__ == '__main__':
-	print("\n-------------------- Interesting Api Calls ------------------------------")
-	print("NOTE:  Addresses and names (\"sub_403D50\", \"loc_4022EA\", \"4022ec\", etc) are (double) clickable.")
-	print("Run at: %s" % (strftime("%Y-%m-%d %H:%M:%S")))
-	for call_ea, name in sorted(Names()):
-		demangled_name = Demangle(name, INF_SHORT_DN)
-		if demangled_name != None:
-			name = demangled_name
-		
-		for keyword, note in sorted(INTERESTING_SUBSTRINGS):
-			if keyword.lower() in name.lower():
-				xrefs = sorted([ x for x in CodeRefsTo(call_ea, 0) if SegName(call_ea) != ".data" ])
-				if len(xrefs) > 0:
-					print("\nCalls To: (%x) %s (%s)" % (call_ea, name, note))
-					#print("          (%s)" % (note))
-					for xref in xrefs:
-						print("          [%x] %s" % (xref, GetFunctionName(xref)))
+    print("\n-------------------- Interesting Api Calls ------------------------------")
+    print("NOTE:  Addresses and names (\"sub_403D50\", \"loc_4022EA\", \"4022ec\", etc) are (double) clickable.")
+    print("Run at: %s" % (strftime("%Y-%m-%d %H:%M:%S")))
+    for call_ea, name in sorted(Names()):
+        demangled_name = Demangle(name, INF_SHORT_DN)
+        if demangled_name != None:
+            name = demangled_name
+
+        for keyword, note in sorted(INTERESTING_SUBSTRINGS):
+            if keyword.lower() in name.lower():
+                xrefs = sorted([ x for x in CodeRefsTo(call_ea, 0) if SegName(call_ea) != ".data" ])
+                if len(xrefs) > 0:
+                    print("\nCalls To: (%x) %s (%s)" % (call_ea, name, note))
+                    #print("          (%s)" % (note))
+                    for xref in xrefs:
+                        print("          [%x] %s" % (xref, GetFunctionName(xref)))
 

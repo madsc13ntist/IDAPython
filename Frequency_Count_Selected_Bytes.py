@@ -21,18 +21,18 @@ __description__= "Use IDAPython to perform a frequency analysis on a stream of b
 from idautils import *
 
 def byteFreq(start=SelStart(), end=SelEnd()):
-	b = {}
-	for byte in [ GetOriginalByte(x) for x in range(start, end+1) ]:
-		if byte in b:
-			b[byte] += 1
-		else:
-			b[byte] = 1
-	
-	for byte,freq in sorted(b.iteritems(),key=lambda (l,f): (-f,l)):
-		print freq, hex(byte)
-	return b
+    b = {}
+    for byte in [ GetOriginalByte(x) for x in range(start, end+1) ]:
+        if byte in b:
+            b[byte] += 1
+        else:
+            b[byte] = 1
+
+    for byte,freq in sorted(b.iteritems(),key=lambda (l,f): (-f,l)):
+        print freq, hex(byte)
+    return b
 
 ########################### MAIN ###########################
 if __name__ == '__main__':
-	print("--------------------------------------------")
-	byteFreq()
+    print("--------------------------------------------")
+    byteFreq()

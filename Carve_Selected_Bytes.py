@@ -20,19 +20,19 @@ __description__= "Use IDAPython to extract a piece of a binary."
 from idautils import *
 
 def carveSelectedBytes(outfile="", start=SelStart(), end=SelEnd()):
-	"""
-	Carve specified bytes out to a file.
-	"""
-	if outfile == "":
-		outfile = AskFile(1, hex(start)+".bin", "Save As")
-	try:
-		with open(outfile, "wb") as fp:
-			for ea in range(start, end+1):
-				fp.write(chr(GetOriginalByte(ea)))
-		print("\n%x-%x saved to: %s" % (start, end, outfile))
-	except Exception as e:
-		return str(e)
+    """
+    Carve specified bytes out to a file.
+    """
+    if outfile == "":
+        outfile = AskFile(1, hex(start)+".bin", "Save As")
+    try:
+        with open(outfile, "wb") as fp:
+            for ea in range(start, end+1):
+                fp.write(chr(GetOriginalByte(ea)))
+        print("\n%x-%x saved to: %s" % (start, end, outfile))
+    except Exception as e:
+        return str(e)
 
 ########################### MAIN ###########################
 if __name__ == '__main__':
-	carveSelectedBytes()
+    carveSelectedBytes()

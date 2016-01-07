@@ -28,97 +28,97 @@ from time import strftime
 IMPORTED = []
 
 def carveSelectedBytes(outfile="", start=SelStart(), end=SelEnd()):
-	if outfile == "":
-		outfile = AskFile(1, hex(SelStart())+".bin", "Save As")
-	try:
-		with open(outfile, "wb") as fp:
-			for ea in range(start, end+1):
-				fp.write(chr(GetOriginalByte(ea)))
-		print("\n%x-%x saved to: %s" % (SelStart(), SelEnd(), outfile))
-	except Exception as e:
-		return str(e)
+    if outfile == "":
+        outfile = AskFile(1, hex(SelStart())+".bin", "Save As")
+    try:
+        with open(outfile, "wb") as fp:
+            for ea in range(start, end+1):
+                fp.write(chr(GetOriginalByte(ea)))
+        print("\n%x-%x saved to: %s" % (SelStart(), SelEnd(), outfile))
+    except Exception as e:
+        return str(e)
 
 def imp_cb(ea, name, ord):
-	if name:
-		#print "%08x: %s (ord#%d)" % (ea, name, ord)
-		IMPORTED.append(name)
-	return True
+    if name:
+        #print "%08x: %s (ord#%d)" % (ea, name, ord)
+        IMPORTED.append(name)
+    return True
 
 def ImportedFuncs():
-	nimps = idaapi.get_import_module_qty()
-	#print "Found %d import(s)..." % nimps
-	for i in xrange(0, nimps):
-		name = idaapi.get_import_module_name(i)
-		if not name:
-			#print "Failed to get import module name for #%d" % i
-			continue
-		#print "Walking-> %s" % name
-		idaapi.enum_import_names(i, imp_cb)
-	return sorted(IMPORTED)
+    nimps = idaapi.get_import_module_qty()
+    #print "Found %d import(s)..." % nimps
+    for i in xrange(0, nimps):
+        name = idaapi.get_import_module_name(i)
+        if not name:
+            #print "Failed to get import module name for #%d" % i
+            continue
+        #print "Walking-> %s" % name
+        idaapi.enum_import_names(i, imp_cb)
+    return sorted(IMPORTED)
 
 def FuncHashes(funcea):
-	# carve out func
-	tmpfile = os.getenv("TEMP") + os.sep + "func_" + hex(funcea) + ".tmp"
-	carveSelectedBytes(tmpfile, funcea, FindFuncEnd(funcea))
-	func_md5 = hashlib.md5(open(tmpfile, 'rb').read()).hexdigest()
-	
-	# delete tmp file
-	os.path.remove(tmpfile)
+    # carve out func
+    tmpfile = os.getenv("TEMP") + os.sep + "func_" + hex(funcea) + ".tmp"
+    carveSelectedBytes(tmpfile, funcea, FindFuncEnd(funcea))
+    func_md5 = hashlib.md5(open(tmpfile, 'rb').read()).hexdigest()
+
+    # delete tmp file
+    os.path.remove(tmpfile)
 
 
 
 ########################### MAIN ###########################
 if __name__ == '__main__':
-	print("NOTE:  Addresses and names (\"sub_403D50\", \"loc_4022EA\", \"4022ec\", etc) are (double) clickable.")
-	print("                       %s" % (strftime("%Y-%m-%d %H:%M:%S")))
-	print("-------------------- Functions  ------------------------------")
-	
-	imp = ImportedFuncs()
-	ea = SegByBase(SegByName(".text"))
-	for funcea in Functions(SegStart(ea), SegEnd(ea)):
-		if GetFunctionName(funcea) not in imp:
-			print(GetFunctionName(funcea))
-	
-	
-	"""
-		xor_loops = funcContainsXORLoop(funcea)
-		if xor_loops:
-			func_type = GetType(funcea)
-			if func_type == None:
-				func_type = ""
-			print("XOR Loop in %s %s" % (Name(funcea), func_type))
-			for item in xor_loops:
-				print("    [%x]: %s" % (item, GetDisasm(item)))
-			
-			data_refs = dataRefsInFunc(funcea)
-			if data_refs:
-				for dref in data_refs:
-					print("--> Data Ref: %s (%d bytes)" % (Name(dref), ItemSize(dref)))
-			
-			for xref in XrefsTo(funcea, 0):
-				if GetMnem(xref.frm) == "call":
-					func_type = GetType(xref.frm)
-					if func_type == None:
-						func_type = ""
-					print("--> Called By: %s (%x) %s" % (GetFunctionName(xref.frm), xref.frm, func_type))
-					
-					'''
-					data_refs = dataRefsInFunc(xref.frm)
-					if data_refs:
-						for dref in data_refs:
-							print("------> Data Ref: %s (%d bytes)" % (Name(dref), ItemSize(dref)))#'''
-					
-					args = argsForCall(xref.frm)
-					if args:
-						arg_count = 0
-						for arg_ea, arg in args:
-							arg_count += 1
-							arg_str = GetString(LocByName(arg))
-							if arg_str != None:
-								print("               Arg #%d = %s %s" % (arg_count, arg, arg_str))
-							elif ItemSize(LocByName(arg.split()[-1])) > 1:
-								print("               Arg #%d = %s (%d bytes)" % (arg_count, arg, ItemSize(LocByName(arg.split()[-1]))))
-							else:
-								print("               Arg #%d = %s" % (arg_count, arg, ))
-			print("")
+    print("NOTE:  Addresses and names (\"sub_403D50\", \"loc_4022EA\", \"4022ec\", etc) are (double) clickable.")
+    print("                       %s" % (strftime("%Y-%m-%d %H:%M:%S")))
+    print("-------------------- Functions  ------------------------------")
+
+    imp = ImportedFuncs()
+    ea = SegByBase(SegByName(".text"))
+    for funcea in Functions(SegStart(ea), SegEnd(ea)):
+        if GetFunctionName(funcea) not in imp:
+            print(GetFunctionName(funcea))
+
+
+    """
+        xor_loops = funcContainsXORLoop(funcea)
+        if xor_loops:
+            func_type = GetType(funcea)
+            if func_type == None:
+                func_type = ""
+            print("XOR Loop in %s %s" % (Name(funcea), func_type))
+            for item in xor_loops:
+                print("    [%x]: %s" % (item, GetDisasm(item)))
+
+            data_refs = dataRefsInFunc(funcea)
+            if data_refs:
+                for dref in data_refs:
+                    print("--> Data Ref: %s (%d bytes)" % (Name(dref), ItemSize(dref)))
+
+            for xref in XrefsTo(funcea, 0):
+                if GetMnem(xref.frm) == "call":
+                    func_type = GetType(xref.frm)
+                    if func_type == None:
+                        func_type = ""
+                    print("--> Called By: %s (%x) %s" % (GetFunctionName(xref.frm), xref.frm, func_type))
+
+                    '''
+                    data_refs = dataRefsInFunc(xref.frm)
+                    if data_refs:
+                        for dref in data_refs:
+                            print("------> Data Ref: %s (%d bytes)" % (Name(dref), ItemSize(dref)))#'''
+
+                    args = argsForCall(xref.frm)
+                    if args:
+                        arg_count = 0
+                        for arg_ea, arg in args:
+                            arg_count += 1
+                            arg_str = GetString(LocByName(arg))
+                            if arg_str != None:
+                                print("               Arg #%d = %s %s" % (arg_count, arg, arg_str))
+                            elif ItemSize(LocByName(arg.split()[-1])) > 1:
+                                print("               Arg #%d = %s (%d bytes)" % (arg_count, arg, ItemSize(LocByName(arg.split()[-1]))))
+                            else:
+                                print("               Arg #%d = %s" % (arg_count, arg, ))
+            print("")
 """

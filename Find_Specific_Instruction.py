@@ -25,34 +25,34 @@ import re
 
 ########################### MAIN ###########################
 if __name__ == '__main__':
-	ea = SegByBase(SegByName(".text"))
-	s = AskStr(GetDisasm(ItemHead(SelStart())), "Please enter a string (regex) for the instruction to search for.")
-	if s in ["", None, False]:
-		Warning("You must enter an instruction/regex to search for.")
-	else:
-		inst = re.compile(s.strip().replace(" ", "\s+"))
-		
-		
-		print("NOTE:  Addresses and names (\"sub_403D50\", \"loc_4022EA\", \"4022ec\", etc) are (double) clickable.")
-		print("                       %s" % (strftime("%Y-%m-%d %H:%M:%S")))
-		print("-------------------- Instruction Search: " + s + " ------------------------------")
-		for funcea in Functions(SegStart(ea), SegEnd(ea)):
-			results = []
-			for item in FuncItems(funcea):
-				for match in inst.findall(GetDisasm(item)):
-					results.append(item)
-				if GetMnem(item) in ['xor', 'or', 'and', 'rol', 'ror', 'shr', 'shl']:
-					if GetOpType(item, 0) == 4 and GetOpType(item, 1) == 5:
-						if GetOperandValue(item, 1) not in [0x0, 0x0FFFFFFFF]:
-							print(GetDisasm(item))
-			
-			if len(results) > 0:
-				func_name = Demangle(GetFunctionName(funcea), INF_SHORT_DN)
-				if func_name:
-					print("%s:" % (func_name))
-				else:
-					print("%s:" % (GetFunctionName(funcea)))
-				for offset in results:
-					print("\t[%x]: %s" % (offset, GetDisasm(offset)))
-					print("%d, %d" % (GetOpType(offset, 0), GetOpType(offset, 1)))
-				print("")
+    ea = SegByBase(SegByName(".text"))
+    s = AskStr(GetDisasm(ItemHead(SelStart())), "Please enter a string (regex) for the instruction to search for.")
+    if s in ["", None, False]:
+        Warning("You must enter an instruction/regex to search for.")
+    else:
+        inst = re.compile(s.strip().replace(" ", "\s+"))
+
+
+        print("NOTE:  Addresses and names (\"sub_403D50\", \"loc_4022EA\", \"4022ec\", etc) are (double) clickable.")
+        print("                       %s" % (strftime("%Y-%m-%d %H:%M:%S")))
+        print("-------------------- Instruction Search: " + s + " ------------------------------")
+        for funcea in Functions(SegStart(ea), SegEnd(ea)):
+            results = []
+            for item in FuncItems(funcea):
+                for match in inst.findall(GetDisasm(item)):
+                    results.append(item)
+                if GetMnem(item) in ['xor', 'or', 'and', 'rol', 'ror', 'shr', 'shl']:
+                    if GetOpType(item, 0) == 4 and GetOpType(item, 1) == 5:
+                        if GetOperandValue(item, 1) not in [0x0, 0x0FFFFFFFF]:
+                            print(GetDisasm(item))
+
+            if len(results) > 0:
+                func_name = Demangle(GetFunctionName(funcea), INF_SHORT_DN)
+                if func_name:
+                    print("%s:" % (func_name))
+                else:
+                    print("%s:" % (GetFunctionName(funcea)))
+                for offset in results:
+                    print("\t[%x]: %s" % (offset, GetDisasm(offset)))
+                    print("%d, %d" % (GetOpType(offset, 0), GetOpType(offset, 1)))
+                print("")

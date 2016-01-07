@@ -34,77 +34,77 @@ chunk = the pieces of a function in ida.
 
 
 def dataObjects(threshold=0):
-	seg = SegByBase(SegByName(".data"))
-	objects = {}
-	for head in Heads(SegStart(seg), SegEnd(seg)):
-		if ItemSize(head) > threshold:
-			#print("%s (%d bytes)\t" % (Name(head), ItemSize(head), GetString(head)))
-			objects[head] = ItemSize(head)
-	
-		#Jump(head)
-		#Sleep(1000)
-	return objects
+    seg = SegByBase(SegByName(".data"))
+    objects = {}
+    for head in Heads(SegStart(seg), SegEnd(seg)):
+        if ItemSize(head) > threshold:
+            #print("%s (%d bytes)\t" % (Name(head), ItemSize(head), GetString(head)))
+            objects[head] = ItemSize(head)
+
+        #Jump(head)
+        #Sleep(1000)
+    return objects
 
 def Xor_Scan(ea):
-	print("scanning: %x" % (ea))
-	xor_results = {}
-	for n in range(1,256):
-		xored_stream = []
-		xored_byte = 0
-		while xored_byte < 128:
-		#for b in [ GetOriginalByte(x) for x in range(ea, ea+size+1) ]:
-			xored_byte = GetOriginalByte(ea) ^ n
-			if xored_byte > 128:
-				if len(xored_stream) == 0:
-					break
-				else:
-					xor_results[ea] = (n, ''.join([ chr(x) for x in xored_stream ]))
-					#print("%x: %s" % (n, ''.join([ chr(x) for x in xored_stream ])))
-			else:
-				xored_stream.append(xored_byte)
-			ea += 1
-	if len(xor_results) > 0:
-		return xor_results
-	else:
-		return False
+    print("scanning: %x" % (ea))
+    xor_results = {}
+    for n in range(1,256):
+        xored_stream = []
+        xored_byte = 0
+        while xored_byte < 128:
+        #for b in [ GetOriginalByte(x) for x in range(ea, ea+size+1) ]:
+            xored_byte = GetOriginalByte(ea) ^ n
+            if xored_byte > 128:
+                if len(xored_stream) == 0:
+                    break
+                else:
+                    xor_results[ea] = (n, ''.join([ chr(x) for x in xored_stream ]))
+                    #print("%x: %s" % (n, ''.join([ chr(x) for x in xored_stream ])))
+            else:
+                xored_stream.append(xored_byte)
+            ea += 1
+    if len(xor_results) > 0:
+        return xor_results
+    else:
+        return False
 
 ########################### MAIN ###########################
 if __name__ == '__main__':
-	data_objects = dataObjects()	# parse initialized data objects
-	data_objects_by_size = sorted(data_objects.iteritems(), key=operator.itemgetter(1))
-	print("%d objects found in .data" % (len(data_objects)))
-	for ea, size in data_objects_by_size:
-		if GetString(ea):
-			print("%x: (%d bytes) %s" % (ea, size, GetString(ea)))
-		else:
-			xored_streams = Xor_Scan(ea)
-			if xored_streams:
-				for addr in sorted(xored_streams):
-					print(xored_streams[addr])
-					for key, string in xored_streams[addr]:
-						print("%x: (xor_key: %x) %s" % (addr, key, string))
-	print("")
-	
+    data_objects = dataObjects()	# parse initialized data objects
+    data_objects_by_size = sorted(data_objects.iteritems(), key=operator.itemgetter(1))
+    print("%d objects found in .data" % (len(data_objects)))
+    for ea, size in data_objects_by_size:
+        if GetString(ea):
+            print("%x: (%d bytes) %s" % (ea, size, GetString(ea)))
+        else:
+            xored_streams = Xor_Scan(ea)
+            if xored_streams:
+                for addr in sorted(xored_streams):
+                    print(xored_streams[addr])
+                    for key, string in xored_streams[addr]:
+                        print("%x: (xor_key: %x) %s" % (addr, key, string))
+    print("")
+
 
 """
 ea = SegByBase(SegByName(".text"))
 print("-------------------- Functions with XOR loops ------------------------------")
 for funcea in Functions(SegStart(ea), SegEnd(ea)):
-	for ref in DataRefsFrom(funcea):
-		if isData(ref):
-			print Name(ref), hex(ref)
-	
-	
-	
-	
-	if xor_loops:
-		print("%x: %s" % (funcea, Name(funcea)))
-		for item in xor_loops:
-			print("%x: %s" % (item, GetDisasm(item)))
-		for xref in XrefsTo(funcea, 0):
-			if GetMnem(xref.frm) == "call":
-				print("--> Called By: %x" % (xref.frm))
-		#Jump(item)
-		#time.sleep(1)
-		print("")
+    for ref in DataRefsFrom(funcea):
+        if isData(ref):
+            print Name(ref), hex(ref)
+
+
+
+
+    if xor_loops:
+        print("%x: %s" % (funcea, Name(funcea)))
+        for item in xor_loops:
+            print("%x: %s" % (item, GetDisasm(item)))
+        for xref in XrefsTo(funcea, 0):
+            if GetMnem(xref.frm) == "call":
+                print("--> Called By: %x" % (xref.frm))
+        #Jump(item)
+        #time.sleep(1)
+        print("")
 """

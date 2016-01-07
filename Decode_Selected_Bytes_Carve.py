@@ -21,19 +21,19 @@ import os
 from time import strftime
 
 def decoder(byte):
-	"""XOR each byte by 0xf3 (243)"""
-	return byte ^ 0xf3
+    """XOR each byte by 0xf3 (243)"""
+    return byte ^ 0xf3
 
 ########################### MAIN ###########################
 if __name__ == '__main__':
-	outfile = AskFile(1, GetInputFileMD5().lower() + "_" + hex(SelStart())+".bin", "Save As")
-	if outfile != None:
-		with open(outfile, 'wb') as dump:
-			print("\n[%s]" % (strftime("%Y-%m-%d %H:%M:%S")))
-			print("Decoder:  %s" % (os.path.basename(__file__)))
-			print("Desc: %s" % (decoder.__doc__))
-			print("Offsets:  0x%x-0x%x  (%d bytes)" % (SelStart(), SelEnd(), SelEnd() - SelStart()))
-			print("Saved As: %s " % (outfile))
-			
-			for b in range(SelStart(), SelEnd()+1):
-				dump.write(chr(decoder(GetOriginalByte(b))))
+    outfile = AskFile(1, GetInputFileMD5().lower() + "_" + hex(SelStart())+".bin", "Save As")
+    if outfile != None:
+        with open(outfile, 'wb') as dump:
+            print("\n[%s]" % (strftime("%Y-%m-%d %H:%M:%S")))
+            print("Decoder:  %s" % (os.path.basename(__file__)))
+            print("Desc: %s" % (decoder.__doc__))
+            print("Offsets:  0x%x-0x%x  (%d bytes)" % (SelStart(), SelEnd(), SelEnd() - SelStart()))
+            print("Saved As: %s " % (outfile))
+
+            for b in range(SelStart(), SelEnd()+1):
+                dump.write(chr(decoder(GetOriginalByte(b))))
